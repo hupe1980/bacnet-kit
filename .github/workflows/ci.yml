@@ -70,5 +70,7 @@ jobs:
         run: uv run scripts/check-cov.py
       - name: Exercise routed reads and foreign registration across two IPv4 subnets
         run: |
-          peer_python=$(uv run --with bacpypes3==0.1.0 python -c 'import sys; print(sys.executable)')
-          sudo scripts/check-routing-subnets.sh "$peer_python"
+          routing_env=$(mktemp -d)
+          uv venv "$routing_env"
+          uv pip install --python "$routing_env/bin/python" bacpypes3==0.1.0
+          sudo scripts/check-routing-subnets.sh "$routing_env/bin/python"

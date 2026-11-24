@@ -41,8 +41,10 @@ The segmentation fixture reads a 1,680-character value across seven reply segmen
 To exercise actual subnet broadcasts on Linux, install iproute2 and util-linux. The script creates temporary network namespaces for the BBMD, gateway and workstation.
 
 ```sh
-peer_python=$(uv run --with bacpypes3==0.1.0 python -c 'import sys; print(sys.executable)')
-sudo scripts/check-routing-subnets.sh "$peer_python"
+routing_env=$(mktemp -d)
+uv venv "$routing_env"
+uv pip install --python "$routing_env/bin/python" bacpypes3==0.1.0
+sudo scripts/check-routing-subnets.sh "$routing_env/bin/python"
 ```
 
 ## Staged Secure Connect credentials
