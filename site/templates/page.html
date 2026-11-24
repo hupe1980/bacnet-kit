@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap layout">
+  <aside class="sidebar" aria-label="Guide pages">
+    <a class="side-title" href="{{ get_url(path='@/docs/_index.md') }}">Field guide</a>
+    {% set docs = get_section(path="docs/_index.md") %}
+    {% for group in config.extra.guide_groups %}
+      <h2>{{ group }}</h2>
+      {% for guide in docs.pages %}{% if guide.extra.group == group %}
+        <a {% if guide.path == page.path %}aria-current="page"{% endif %} href="{{ guide.permalink }}">{{ guide.title }}</a>
+      {% endif %}{% endfor %}
+    {% endfor %}
+  </aside>
+  <article class="guide">
+    <div class="crumb"><a href="{{ get_url(path='@/docs/_index.md') }}">Field guide</a> <span aria-hidden="true">/</span> {{ page.extra.group }}</div>
+    <h1>{{ page.title }}</h1>
+    {% if page.toc %}<details class="contents"><summary>On this page</summary><ul>{% for item in page.toc %}<li><a href="#{{ item.id }}">{{ item.title }}</a></li>{% endfor %}</ul></details>{% endif %}
+    {{ page.content | safe }}
+  </article>
+</div>
+{% endblock %}

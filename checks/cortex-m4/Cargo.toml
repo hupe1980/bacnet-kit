@@ -1,0 +1,16 @@
+[package]
+name = "bacnet-firmware-check"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[dependencies]
+bacnet-kit = { path = "../..", default-features = false }
+cortex-m-rt = "0.7"
+cortex-m-semihosting = "0.6"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"

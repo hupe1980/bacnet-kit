@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero wrap">
+  <div class="intro">
+    <h1>Commission<br>BACnet devices<br><em>in Rust.</em></h1>
+    <p>Read building automation points, check their units and status, and test setpoint priorities. Start on loopback with a simulated device.</p>
+    <div class="actions"><a class="button" href="{{ get_url(path='@/docs/commissioning.md') }}">Read your first point <span aria-hidden="true">→</span></a><a class="text-link" href="{{ get_url(path='@/docs/_index.md') }}">Browse the guide</a></div>
+  </div>
+  <div class="instrument">
+    <picture><source srcset="{{ get_url(path='control-panel-small.webp') }} 640w, {{ get_url(path='control-panel.webp') }} 1100w" sizes="(max-width: 760px) 94vw, 50vw" type="image/webp"><img src="{{ get_url(path='control-panel.jpg') }}" width="1200" height="800" fetchpriority="high" alt="DIN-rail controllers and wiring inside a building automation cabinet"></picture>
+    <div class="readout"><span>Loopback demo <b>Analog Input 1</b></span><strong>21.5<small> °C</small></strong><span class="status"><i aria-hidden="true"></i> Normal</span></div>
+  </div>
+</section>
+<section class="connections"><div class="wrap">
+  <h2>Choose a connection</h2>
+  <div class="cards">
+    <a href="{{ get_url(path='@/docs/commissioning.md') }}"><span class="link-sign" aria-hidden="true">↔</span><h3>BACnet/IP</h3><p>Inventory a device and read its objects and properties over UDP.</p><span class="card-link">Read over IP <b aria-hidden="true">↗</b></span></a>
+    <a href="{{ get_url(path='@/docs/sc-read.md') }}"><span class="link-sign" aria-hidden="true">⇄</span><h3>Secure Connect</h3><p>Authenticate a node and read through a primary or failover hub.</p><span class="card-link">Connect to a hub <b aria-hidden="true">↗</b></span></a>
+    <a href="{{ get_url(path='@/docs/mstp.md') }}"><span class="link-sign" aria-hidden="true">∿</span><h3>MS/TP</h3><p>Inspect a captured serial frame and check its addresses, length and CRC.</p><span class="card-link">Inspect a frame <b aria-hidden="true">↗</b></span></a>
+  </div>
+</div></section>
+<section class="try wrap"><div><h2>Try the local device</h2><p>Install the CLI and run a temperature read on loopback. The demo starts its own device and exits after the reading.</p><a class="text-link" href="{{ get_url(path='@/docs/rust.md') }}">Use the Rust API →</a></div>
+<div class="terminal"><div class="termhead">Terminal</div><pre><code><span>$</span> brew install hupe1980/tap/bacnet-kit
+<span>$</span> bacnet-kit demo
+
+Analog Input 1   21.5 °C
+Status           normal</code></pre></div></section>
+{% endblock %}

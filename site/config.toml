@@ -1,0 +1,9 @@
+base_url = "https://hupe1980.github.io/bacnet-kit"
+title = "bacnet-kit"
+description = "A Rust toolkit for BACnet/IP commissioning, BACnet Secure Connect reads, and offline MS/TP inspection."
+default_language = "en"
+compile_sass = false
+
+[extra]
+repository = "https://github.com/hupe1980/bacnet-kit"
+guide_groups = ["Read and control", "Network and security", "Development and verification"]

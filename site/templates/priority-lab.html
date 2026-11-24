@@ -1,0 +1,26 @@
+<div class="priority-lab" data-priority-lab hidden>
+  <fieldset>
+    <legend>Try the priority slots</legend>
+    <div class="priority-choice">
+      <label for="priority-8">Priority 8</label>
+      <select id="priority-8" name="p8">
+        <option value="">Relinquished</option>
+        <option value="22" selected>22 °C</option>
+      </select>
+    </div>
+    <div class="priority-choice">
+      <label for="priority-16">Priority 16</label>
+      <select id="priority-16" name="p16">
+        <option value="">Relinquished</option>
+        <option value="19">19 °C</option>
+        <option value="18" selected>18 °C</option>
+      </select>
+    </div>
+  </fieldset>
+  <div class="priority-result" aria-live="polite" aria-atomic="true">
+    <span>Effective setpoint</span>
+    <strong data-value>22 °C</strong>
+    <span data-source>Priority 8</span>
+  </div>
+</div>
+<script type="module" src="{{ get_url(path='priority-lab.js') }}"></script>

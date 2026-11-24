@@ -1,0 +1,20 @@
+class BacnetKit < Formula
+  desc "Commission BACnet devices and inspect MS/TP frames"
+  homepage "https://crates.io/crates/bacnet-kit"
+  url "https://static.crates.io/crates/bacnet-kit/bacnet-kit-@VERSION@.crate"
+  version "@VERSION@"
+  sha256 "@SHA256@"
+  license any_of: ["MIT", "Apache-2.0"]
+
+  depends_on "rust" => :build
+
+  def install
+    system "cargo", "install", *std_cargo_args(features: ["sc-node"])
+  end
+
+  test do
+    assert_equal "bacnet-kit #{version}", shell_output("#{bin}/bacnet-kit --version").strip
+    assert_match "TARGET-VMAC", shell_output("#{bin}/bacnet-kit sc-read --help")
+    assert_match "TOKEN (0)", shell_output("#{bin}/bacnet-kit mstp-frame 55ff000102000040")
+  end
+end

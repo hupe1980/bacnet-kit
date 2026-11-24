@@ -1,0 +1,12 @@
+<fieldset class="batch-builder" data-batch-builder hidden>
+  <legend>Choose fixture properties</legend>
+  <label><input type="checkbox" value="analog-input:1/present-value" checked> Temperature</label>
+  <label><input type="checkbox" value="analog-input:1/status-flags"> Status flags</label>
+  <label><input type="checkbox" value="analog-input:1/description"> Description (returns a property error)</label>
+  <label><input type="checkbox" value="device:123/object-list/1" checked> First inventory entry</label>
+  <label class="peer-limits"><input type="checkbox" data-peer-limits> Read Device 123’s receive limits first</label>
+  <label for="batch-command">Command</label>
+  <textarea id="batch-command" readonly rows="4" spellcheck="false"></textarea>
+  <output aria-live="polite"></output>
+</fieldset>
+<script type="module" src="{{ get_url(path='batch-builder.js') }}"></script>

@@ -1,0 +1,53 @@
+[package]
+name = "bacnet-kit"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95"
+description = "BACnet/IP and BACnet/SC commissioning tools, an offline MS/TP inspector, and an embedded responder"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/hupe1980/bacnet-kit"
+homepage = "https://hupe1980.github.io/bacnet-kit/"
+keywords = ["bacnet", "building-automation", "mstp", "embedded"]
+categories = ["command-line-utilities", "embedded", "network-programming"]
+include = ["/src/**", "/tests/**", "/README.md", "/CHANGELOG.md", "/Cargo.toml", "/Cargo.lock", "/LICENSE-*"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+default = ["cli"]
+cli = ["std", "dep:clap"]
+std = ["bacnet-encoding/alloc", "bacnet-services/alloc", "dep:bytes"]
+
+sc-pki = ["std", "dep:rustls", "dep:webpki", "dep:x509-parser", "dep:sha2", "dep:zeroize", "dep:libc"]
+
+sc-node = ["sc-pki", "dep:bacnet-transport", "dep:tokio", "dep:tokio-rustls", "dep:tokio-tungstenite", "dep:futures-util", "dep:uuid"]
+
+[dependencies]
+clap = { version = "4.6", optional = true, features = ["derive"] }
+bacnet-mstp-codec = { version = "=0.15.0", default-features = false }
+bacnet-transport = { version = "=0.15.0", optional = true, default-features = false }
+tokio = { version = "1", optional = true, features = ["rt", "net", "time"] }
+tokio-rustls = { version = "0.26", optional = true, default-features = false, features = ["ring"] }
+tokio-tungstenite = { version = "0.29", optional = true, default-features = false, features = ["handshake"] }
+futures-util = { version = "0.3", optional = true, features = ["sink"] }
+uuid = { version = "1", optional = true }
+rustls = { version = "0.23.46", optional = true, default-features = false, features = ["std", "ring"] }
+webpki = { package = "rustls-webpki", version = "0.103.17", optional = true, default-features = false, features = ["std", "ring"] }
+x509-parser = { version = "0.18.1", optional = true, default-features = false }
+sha2 = { version = "0.10", optional = true }
+zeroize = { version = "1.9", optional = true }
+bytes = { version = "1", optional = true, default-features = false }
+bacnet-bip-core = { version = "=0.15.0", default-features = false }
+bacnet-encoding = { version = "=0.15.0", default-features = false }
+bacnet-npdu = { version = "=0.15.0", default-features = false }
+bacnet-services = { version = "=0.15.0", default-features = false }
+bacnet-types = { version = "=0.15.0", default-features = false }
+
+[target.'cfg(unix)'.dependencies]
+libc = { version = "0.2", optional = true }
+
+[[bin]]
+name = "bacnet-kit"
+path = "src/main.rs"
+required-features = ["cli"]

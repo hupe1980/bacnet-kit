@@ -1,0 +1,9 @@
+/target/
+
+# Local design notes and Spec Kit workspace.
+/concepts/
+/specs/
+/.specify/
+/.agents/skills/speckit-*/
+/site/public/
+/checks/cortex-m4/target/

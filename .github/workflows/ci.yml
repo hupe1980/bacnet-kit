@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup target add thumbv7em-none-eabihf
+      - run: cargo fmt --all --check && cargo fmt --manifest-path checks/cortex-m4/Cargo.toml --check
+      - run: cargo clippy --all-targets --all-features --locked -- -D warnings
+      - run: cargo test --locked
+      - run: cargo test --locked --all-features
+      - run: cargo test --locked --no-default-features
+      - run: cargo test --locked --no-default-features --features std
+      - run: cargo check --locked --no-default-features --target thumbv7em-none-eabihf
+      - name: Run the Cortex-M4 command fixture
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends qemu-system-arm
+          cd checks/cortex-m4
+          cargo build --release --locked
+          timeout 30s cargo run --release --locked
+      - run: cargo doc --locked --all-features --no-deps
+        env:
+          RUSTDOCFLAGS: -Dwarnings
+      - run: rustup toolchain install 1.95.0 --profile minimal && cargo +1.95.0 check --locked --all-features
+      - run: cargo package --all-features --locked
+      - name: Check that working documents stay out of the release archive
+        run: |
+          cargo package --locked --list > "$RUNNER_TEMP/package-files"
+          if grep -E '^(concepts|specs|site|checks|[.](agents|specify))/' "$RUNNER_TEMP/package-files"; then
+            exit 1
+          fi
+  interop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: bacnet-stack/bacnet-stack
+          ref: 5922a38bee436923dec159bdea9bd21445ec2f38
+          path: peer
+      - run: cmake -S peer -B peer/build -DBACNET_STACK_BUILD_APPS=ON -DBACDL_BIP=ON
+      - run: cmake --build peer/build --target server readprop readpropm writeprop --parallel 4
+      - run: scripts/check-mstp-vectors.sh peer
+      - run: cargo build --locked && python3 scripts/check-interop.py peer/build
+      - uses: astral-sh/setup-uv@v7
+      - name: Check staged Secure Connect credentials with independent issuance
+        run: cargo build --locked --features sc-pki && uv run tests/test_sc_credentials.py
+      - name: Read through independent primary and failover Secure Connect hubs
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libwebsockets-dev libssl-dev pkg-config
+          cmake -S peer -B peer/build-sc -DBACNET_STACK_BUILD_APPS=ON -DBACDL_BSC=ON -DBACDL_BIP=OFF
+          cmake --build peer/build-sc --target sc-hub server --parallel 4
+          cargo build --features sc-node --locked
+          BACNET_SC_PEER_BIN="$PWD/peer/build-sc" uv run tests/test_sc_hub.py
+      - name: Exercise asymmetric segmented reads against BACpypes3
+        run: uv run scripts/check-segmentation.py
+      - name: Exercise both COV delivery modes and recover a lost subscription
+        run: uv run scripts/check-cov.py
+      - name: Exercise routed reads and foreign registration across two IPv4 subnets
+        run: |
+          peer_python=$(uv run --with bacpypes3==0.1.0 python -c 'import sys; print(sys.executable)')
+          sudo scripts/check-routing-subnets.sh "$peer_python"

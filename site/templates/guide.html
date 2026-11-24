@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap guide-index">
+  <div class="index-head"><div><h1>Field guide</h1><p>Start with a local device, then choose a guide for the link, point or Rust API you’re working with.</p></div>
+  <label class="filter" hidden>Find a guide<input type="search" id="guide-filter" placeholder="Try “COV” or “priority”" autocomplete="off"></label></div>
+  {% for group in config.extra.guide_groups %}
+  <section class="guide-group"><h2>{{ group }}</h2><div class="guide-rows">
+    {% for guide in section.pages %}{% if guide.extra.group == group %}
+    <a class="guide-row" href="{{ guide.permalink }}" data-keywords="{{ guide.extra.terms }}"><strong>{{ guide.title }}</strong><span>{{ guide.description }}</span><b aria-hidden="true">↗</b></a>
+    {% endif %}{% endfor %}
+  </div></section>
+  {% endfor %}
+  <p class="empty" role="status" hidden>No guides match. Try a protocol name or a shorter term.</p>
+</div>
+<script type="module" src="{{ get_url(path='guide-filter.js') }}"></script>
+{% endblock %}

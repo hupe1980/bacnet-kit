@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if page is defined %}
+    {% set heading = page.title %}{% set summary = page.description %}{% set canonical = page.permalink %}
+  {% elif section is defined %}
+    {% set heading = section.title %}{% set summary = section.description %}{% set canonical = section.permalink %}
+  {% else %}
+    {% set heading = "Page unavailable" %}{% set summary = "Return to the BACnet commissioning field guide." %}
+  {% endif %}
+  <title>{{ heading }} · bacnet-kit</title>
+  <meta name="description" content="{{ summary }}">
+  {% if canonical is defined %}
+    <link rel="canonical" href="{{ canonical }}">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="{% if page is defined %}article{% else %}website{% endif %}">
+    <meta property="og:site_name" content="bacnet-kit">
+    <meta property="og:title" content="{{ heading }} · bacnet-kit">
+    <meta property="og:description" content="{{ summary }}">
+    <meta property="og:image" content="{{ get_url(path='control-panel.jpg') }}">
+    <meta property="og:image:alt" content="Building automation controllers inside a control cabinet">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "{% if page is defined %}TechArticle{% elif section.path == "/" %}WebSite{% else %}CollectionPage{% endif %}",
+        "name": {{ heading | json_encode() | safe }},
+        "description": {{ summary | json_encode() | safe }},
+        "url": {{ canonical | json_encode() | safe }},
+        "inLanguage": "en"
+      }
+    </script>
+  {% else %}
+    <meta name="robots" content="noindex">
+  {% endif %}
+  <link rel="icon" href="{{ get_url(path='favicon.png') }}" type="image/png">
+  <link rel="stylesheet" href="{{ get_url(path='style.css') }}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead">
+    <nav class="wrap topbar" aria-label="Main navigation">
+      <a class="brand" href="{{ get_url(path='@/_index.md') }}"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>bacnet-kit</a>
+      <div class="toplinks">
+        <a href="{{ get_url(path='@/docs/_index.md') }}">Field guide</a>
+        <a href="{{ get_url(path='@/docs/rust.md') }}">Rust API</a>
+        <a class="repo" href="{{ config.extra.repository }}">GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+  <main id="main">{% block content %}{% endblock %}</main>
+  <footer class="wrap foot"><a class="wordmark" href="{{ get_url(path='@/_index.md') }}">bacnet-kit</a><div><a href="{{ get_url(path='@/docs/verification.md') }}">Verification</a><a href="{{ config.extra.repository }}">Source code</a></div></footer>
+</body>
+</html>
